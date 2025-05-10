@@ -5,6 +5,8 @@ import urllib
 import requests
 import io
 
+
+
 if os.name == 'nt':
     os.system("color")
     os.system("title Social Wars Server")
@@ -52,6 +54,8 @@ __STATIC_ROOT = "/static/socialwars"
 __DYNAMIC_ROOT = "/dynamic/menvswomen/srvsexwars"
 
 ## PAGES AND RESOURCES
+
+
 
 @app.route("/", methods=['GET', 'POST', 'HEAD'])
 def login():
@@ -340,5 +344,6 @@ def alliance():
 print (" [+] Running server...")
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 10000))  # Default to 10000 if PORT is not set
     app.secret_key = 'SECRET_KEY'
-    app.run(host=host, port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)
