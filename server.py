@@ -37,7 +37,7 @@ from version import version_name
 from bundle import ASSETS_DIR, STUB_DIR, TEMPLATES_DIR, BASE_DIR
 from constants import Quests
 
-host = '127.0.0.1'
+host = '0.0.0.0'
 port = 5055
 
 app = Flask(__name__, template_folder=TEMPLATES_DIR)
@@ -53,24 +53,29 @@ __DYNAMIC_ROOT = "/dynamic/menvswomen/srvsexwars"
 
 ## PAGES AND RESOURCES
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST', 'HEAD'])
 def login():
+    if request.method == 'HEAD':
+        return '', 200  # ✅ important: respond to HEAD with empty 200
+
     # Log out previous session
     session.pop('USERID', default=None)
     session.pop('GAMEVERSION', default=None)
-    # Reload saves (not static villages nor quests). Allows saves modification without server reset
+
+    # Reload saves (not static villages nor quests)
     load_saves()
-    # If logging in, set session USERID, and go to play
+
     if request.method == 'POST':
         session['USERID'] = request.form['USERID']
         session['GAMEVERSION'] = request.form['GAMEVERSION']
         print("[LOGIN] USERID:", request.form['USERID'])
         print("[LOGIN] GAMEVERSION:", request.form['GAMEVERSION'])
         return redirect("/play.html")
-    # Login page
+
     if request.method == 'GET':
         saves_info = all_saves_info()
         return render_template("login.html", saves_info=saves_info, version=version_name)
+
 
 @app.route("/play.html")
 def play():
